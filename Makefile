@@ -5,6 +5,9 @@ CFLAGS=-I./include -I./third/http-parser/
 server:src/server.o src/listener.o src/client.o src/main.o src/plugin.o src/http.o third/http-parser/libhttp.a
 	g++ -o $@ src/server.o src/listener.o src/client.o src/main.o src/plugin.o src/http.o third/http-parser/libhttp.a $(THIRD_LIBS) $(LIBS)
 
+so:
+	make -C plugin/slow_query && make -C plugin/fake_mysql
+
 third/http-parser/libhttp.a:third/http-parser/http_parser.o
 	ar -r $@ $<
 
@@ -31,3 +34,7 @@ src/http.o:src/http.cpp include/http.h third/http-parser/http_parser.h include/c
 
 clean:
 	rm -f src/*.o server
+	cd ./plugin/fake_mysql/ && make clean
+	cd ./plugin/slow_query/ && make clean
+	cd ./third/http-parser && make clean
+	
